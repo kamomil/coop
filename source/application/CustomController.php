@@ -115,12 +115,23 @@ class CustomController extends Zend_Controller_Action
 		$coop_users = new Coop_Users();		
 		$post = $this->getRequest()->getPost();
 
-                if (isset($post['order_id']) && !empty($post['order_id']))
+        if (isset($post['order_id']) && !empty($post['order_id']))
 		{
 			echo "by order\n";
 			$order_id = (int)$post['order_id'];
 			echo "order id: $order_id \n";
 			$order = $coop_orders->getOrder($order_id);
+			$coop_id = $order['coop_id'];
+			$coop_coops = new Coop_Coops();
+            $coop = $coop_coops->getCoop($coop_id);
+            $coop_reset_day = $coop['coop_last_reset_day'];
+            error_log("by order - coop's last reset day is $coop_reset_day");
+			if(strtotime($coop_reset_day)-(60*60*24*7)>strtotime($order['order_reset_day']))
+			{
+				error_log("cant edit too old orders");
+				echo 'לא ניתן לערוך הזמנה אחרי שבוע מאיתחול המערכת<br><a href="/duty/view-order/id/'.$order_id.'">חזור</a>';
+				return;
+			}
 		}
 		else
 		{

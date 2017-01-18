@@ -159,6 +159,56 @@ class Coop_Orders extends Awsome_DbTable
 		}
 		return $order;		
 	}
+
+	public function getOrdersOfResetDay($coop_id,$reset_date)
+	{
+		error_log('inside Orders::getOrdersOfResetDay');
+		
+		
+        $sql = "SELECT u.user_id , u.user_first_name , u.user_last_name, u.user_phone, o.order_id, o.order_last_edit, o.total
+                        FROM  users u , orders o
+                        WHERE u.coop_id = " . (int)$coop_id . " 
+                        AND o.user_id = u.user_id 
+                        AND o.order_reset_day = '$reset_date'
+                        ORDER BY u.user_first_name";
+                
+        if (!$orders = $this->adapter->fetchAll($sql))
+		{
+            return false;
+		}
+		foreach ($orders as $key => $value)
+       	{
+       		error_log("key is $key");
+	        
+	        if ($orders[$key])
+	        {
+	            $orders[$key]['total'] = $this->getOrderTotal($orders[$key]);
+	            error_log("$key:  total is : " . $orders[$key]['total']);
+	        }
+    	}
+		return $orders;
+	}
+
+	public function getOrdersResetDays($coop_id)
+	{
+		error_log('inside Orders::getOrdersResetDays');
+		
+		
+        $sql = "SELECT order_reset_day
+                        FROM  users u , orders o
+                        WHERE u.coop_id = " . (int)$coop_id . " 
+                        AND o.user_id = u.user_id 
+                        GROUP BY o.order_reset_day
+                        ORDER BY o.order_reset_day DESC";
+                
+        if (!$reset_days = $this->adapter->fetchAll($sql))
+		{
+            return false;
+		}
+		return $reset_days;
+	}
+
+
 	
 	public function getAllThisWeekOrders($coop_id)
 	{

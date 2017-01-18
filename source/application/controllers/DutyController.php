@@ -11,8 +11,10 @@ class DutyController extends CustomController
 		parent::checkAuth();
 		
 		$this->_smarty->assign('controller', 'duty');
+        
+        $submenu = array("index" => "הזמנות", "stock" => "מלאי", "duty-reports" => "דוח תורן", "previous-reports" => "דוחות קודמים", "weekly-report" => "טבלת סיכום שבועית", "previous-orders" => "הזמנות קודמות");
 
-		$submenu = array("index" => "הזמנות", "stock" => "מלאי", "duty-reports" => "דוח תורן", "previous-reports" => "דוחות קודמים", "weekly-report" => "טבלת סיכום שבועית");
+
 		$this->_smarty->assign('submenu', $submenu);
 		
 		$this->_smarty->assign('hide_left_panel', '1');
@@ -130,6 +132,41 @@ class DutyController extends CustomController
     	$this->_smarty->assign('tpl_file', 'duty/duty_weekly_report.tpl');
     	$this->_smarty->display('common/layout.tpl');
 	}
+
+    public function previousOrdersAction()
+    {
+
+        
+        error_log("in previousOrdersAction");
+        $coop_id = $this->getCoopId();
+
+        $coop_users = new Coop_Users();
+        
+        $coop_orders = new Coop_Orders(); 
+        $reset_days = $coop_orders->getOrdersResetDays($coop_id);
+        
+        $this->_smarty->assign('reset_days', $reset_days);        
+    
+        $this->_smarty->assign('isFarmer', false);
+        $this->_smarty->assign('action', 'previous-orders');
+        $this->_smarty->assign('tpl_file', 'orders/previous_orders.tpl');
+        $this->_smarty->display('common/layout.tpl');
+    }
+    
+    public function ordersOfDayAction()
+    {
+        $params = $this->getRequest()->getParams();
+        $date = $params['date'];
+        echo "$date";
+        $coop_orders = new Coop_Orders();
+        $orders  = $coop_orders -> getOrdersOfResetDay($this->getCoopId(),$date);
+        error_log(print_r($orders,TRUE));
+        $this->_smarty->assign('orders', $orders);
+        $this->_smarty->assign('date', $date);
+        $this->_smarty->assign('tpl_file', 'orders/orders_of_reset_day.tpl');
+        $this->_smarty->display('common/layout.tpl');
+
+    }
     
     public function viewOrderAction()
     {
