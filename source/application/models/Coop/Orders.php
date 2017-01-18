@@ -165,7 +165,7 @@ class Coop_Orders extends Awsome_DbTable
 		error_log('inside Orders::getOrdersOfResetDay');
 		
 		
-        $sql = "SELECT u.user_id , u.user_first_name , u.user_last_name, u.user_phone, o.order_id, o.order_last_edit, o.total
+        $sql = "SELECT u.user_id , u.user_first_name , u.user_last_name, u.user_phone, o.order_id, o.order_last_edit
                         FROM  users u , orders o
                         WHERE u.coop_id = " . (int)$coop_id . " 
                         AND o.user_id = u.user_id 
@@ -208,6 +208,32 @@ class Coop_Orders extends Awsome_DbTable
 		return $reset_days;
 	}
 
+	public function calcOrderTotal($order)
+	{
+		$total = 0;
+	    $items = $this->getItems($order['order_id']);
+				
+		if (!empty($items)) {
+	        foreach ($items as $item)
+	        {
+	            $total += ($item['item_amount'] * $item['product_price']);
+		    }
+		}
+		return $total;
+	}
+
+	public function getOrderTotal($order)
+	{
+		if($order['total'])
+		{
+			error_log('total exist');
+			return $order['total'];
+		}
+		error_log('total NOT exist:');
+		
+		return $this->calcOrderTotal($order);
+	}
+
 
 	
 	public function getAllThisWeekOrders($coop_id)
@@ -237,16 +263,7 @@ class Coop_Orders extends Awsome_DbTable
                     $current_order = $this->getCurrentOrder($value['user_id']);
                     if ($current_order)
                     {
-                        $total = 0;
-                        $items = $this->getItems($current_order['order_id']);
-						
-						if (!empty($items)) {
-	                        foreach ($items as $item)
-    	                    {
-        	                    $total += ($item['item_amount'] * $item['product_price']);
-            	            }
-						}
-                        $orders[$key]['total'] = $total;
+                        $orders[$key]['total'] = $this->getOrderTotal($current_order);
                     }
                 }
                     
