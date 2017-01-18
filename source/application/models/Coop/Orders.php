@@ -253,20 +253,20 @@ class Coop_Orders extends Awsome_DbTable
                         GROUP BY o.order_id 
                         ORDER BY u.user_first_name";
                 
-                if (!$orders = $this->adapter->fetchAll($sql))
+        if (!$orders = $this->adapter->fetchAll($sql))
 		{
                     return false;
 		}
 		
-                foreach ($orders as $key => $value)
-                {
-                    $current_order = $this->getCurrentOrder($value['user_id']);
-                    if ($current_order)
-                    {
-                        $orders[$key]['total'] = $this->getOrderTotal($current_order);
-                    }
-                }
-                    
+        foreach ($orders as $key => $value)
+        {
+            $current_order = $this->getCurrentOrder($value['user_id']);
+            if ($current_order)
+            {
+                $orders[$key]['total'] = $this->getOrderTotal($current_order);
+            }
+        }
+                  
 		return $orders;
 	}
         

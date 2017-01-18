@@ -38,6 +38,51 @@ class DutyController extends CustomController
     	$this->_smarty->display('common/layout.tpl');
     }
 
+    function arrayToCsvDownload($array, $filename = "export.csv", $delimiter=",") {
+        // open raw memory as file so no temp files needed, you might run out of memory though
+        $f = fopen('php://memory', 'w'); 
+        // loop over the input array
+        foreach ($array as $line) { 
+            // generate csv lines from the inner arrays
+            fputcsv($f, $line, $delimiter); 
+        }
+        // reset the file pointer to the start of the file
+        fseek($f, 0);
+        // tell the browser it's going to be a csv file
+        header('Content-Type: application/csv');
+        // tell the browser we want to save it instead of displaying it
+        header('Content-Disposition: attachment; filename="'.$filename.'";');
+        // make php send the generated csv lines to the browser
+        fpassthru($f);
+    }
+
+    public function downloadCsvAction()
+    {
+        $coop_id = $this->getCoopId();
+
+        $coop_orders = new Coop_Orders(); 
+        $orders = $coop_orders->getAllThisWeekOrders($coop_id);
+        error_log("num of orders: ".count($orders));
+
+
+        $csvArr = array();
+        foreach ($orders as $key => $val) {
+            $csvArr[$key] = array('user_first_name' => $val['user_first_name'],
+                'user_name' => $val['user_first_name'].$val['user_last_name'],
+                'order_status' => $val['order_status'],
+                'total' => $val['total']
+                );
+        }
+        //error_log(print_r($orders,TRUE));
+        //error_log(print_r($csvArr,TRUE));
+
+        $coop_coops = new Coop_Coops();
+        $coop = $coop_coops->getCoop($coop_id);
+        $reset_day = date("d-m-Y", strtotime($coop['coop_last_reset_day']));
+
+        $this->arrayToCsvDownload($csvArr,"for-reset-date-$reset_day.csv");
+    }
+
     public function debtAction()
     {
        $coop_debts = new Coop_Debt();

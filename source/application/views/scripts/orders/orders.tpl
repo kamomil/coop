@@ -65,7 +65,7 @@
 			</div>
 			</div>
                 {/foreach}
-			
+                <a href="/duty/download-csv"><button>הורד CSV</button></a>  
 		{/if}
 	</div>
 </div>
