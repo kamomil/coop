@@ -6,6 +6,9 @@
 	<div class="content">
 		<form action="" method="POST" class="form validate_me">
 			<p>
+			<input type="hidden" name="referer" value="{$referer}"/>
+			</p>
+			<p>
 				<label>שם פרטי:</label>
 				<input type="text" name="user_first_name" value="{$user.user_first_name|escape:"html"|stripslashes}" class="required" />
 			</p>

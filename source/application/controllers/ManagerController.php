@@ -524,13 +524,12 @@ class ManagerController extends CustomController
 		
     	if (!$request->isPost())
     	{
-
+    		$referer = $_SERVER['HTTP_REFERER'];
     		$coop_orders = new Coop_Orders();
         
-
         	$previous_orders = $coop_orders->getUserPreviousOrders($user_id);
         	$this->_smarty->assign('previous', $previous_orders);
-        	
+			$this->_smarty->assign('referer', $referer);
 			$user = $coop_users->getUser($user_id);
     		$this->_smarty->assign('user', $user);
 	        $this->_smarty->assign('tpl_file', 'manager/users_form.tpl');
@@ -539,8 +538,14 @@ class ManagerController extends CustomController
     	else 
     	{ 
     		$post = $request->getPost();
+    		$referer_of_referer = $post['referer'];
+    		
+    		error_log("in post of edit user, referer is ".$_SERVER['HTTP_REFERER']." referer of refere is $referer_of_referer");
+
+    		$parts  = parse_url($referer_of_referer);
+
     		$coop_users->editUser($user_id, $post);
-			$this->_redirect("/manager/users");
+			$this->_redirect($parts['path']);
     	}
     }
     
