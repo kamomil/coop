@@ -524,6 +524,13 @@ class ManagerController extends CustomController
 		
     	if (!$request->isPost())
     	{
+
+    		$coop_orders = new Coop_Orders();
+        
+
+        	$previous_orders = $coop_orders->getUserPreviousOrders($user_id);
+        	$this->_smarty->assign('previous', $previous_orders);
+        	
 			$user = $coop_users->getUser($user_id);
     		$this->_smarty->assign('user', $user);
 	        $this->_smarty->assign('tpl_file', 'manager/users_form.tpl');
