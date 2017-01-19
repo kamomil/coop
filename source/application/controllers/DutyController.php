@@ -67,8 +67,8 @@ class DutyController extends CustomController
 
         $csvArr = array();
         foreach ($orders as $key => $val) {
-            $csvArr[$key] = array('user_first_name' => $val['user_first_name'],
-                'user_name' => $val['user_first_name'].$val['user_last_name'],
+            $csvArr[$key] = array(
+                'user_name' => $val['user_first_name'].' '.$val['user_last_name'],
                 'order_status' => $val['order_status'],
                 'total' => $val['total']
                 );
@@ -80,7 +80,7 @@ class DutyController extends CustomController
         $coop = $coop_coops->getCoop($coop_id);
         $reset_day = date("d-m-Y", strtotime($coop['coop_last_reset_day']));
 
-        $this->arrayToCsvDownload($csvArr,"for-reset-date-$reset_day.csv");
+        $this->arrayToCsvDownload($csvArr,"for-current-week-$reset_day.csv");
     }
 
     public function debtAction()
@@ -202,7 +202,6 @@ class DutyController extends CustomController
     {
         $params = $this->getRequest()->getParams();
         $date = $params['date'];
-        echo "$date";
         $coop_orders = new Coop_Orders();
         $orders  = $coop_orders -> getOrdersOfResetDay($this->getCoopId(),$date);
         error_log(print_r($orders,TRUE));
@@ -211,6 +210,26 @@ class DutyController extends CustomController
         $this->_smarty->assign('tpl_file', 'orders/orders_of_reset_day.tpl');
         $this->_smarty->display('common/layout.tpl');
 
+    }
+
+    public function downloadResetDateCsvAction()
+    {
+        $params = $this->getRequest()->getParams();
+        $date = $params['date'];
+        $coop_orders = new Coop_Orders();
+        $orders  = $coop_orders -> getOrdersOfResetDay($this->getCoopId(),$date);
+        $reset_day = date("d-m-Y", strtotime($date));
+
+
+        $csvArr = array();
+        foreach ($orders as $key => $val) {
+            $csvArr[$key] = array(
+                'user_name' => $val['user_first_name'].' '.$val['user_last_name'],
+                'total' => $val['total']
+                );
+        }
+
+        $this->arrayToCsvDownload($csvArr,"for-reset-date-$reset_day.csv");
     }
     
     public function viewOrderAction()

@@ -24,14 +24,13 @@
 <script src="{$js_path}/orders.js"></script>
 
 <div class="section">
-<h2>{$smarty.template}</h2>
         <div class="content list">
 		<br /><br />                
 		{if !$orders}
-		<a>אין הזמנות לתאריך {$date}.</a>
+		<a>אין הזמנות לתאריך {$date|date_format:"%d/%m/%y"}.</a>
 		{else}
-		<h1> הזמנות לתאריך {$date}:</h1>
-                
+		<h1> הזמנות לתאריך {$date|date_format:"%d/%m/%y"}:</h1>
+         <a href="/duty/download-reset-date-csv/date/{$date}"><button>הורד CSV</button></a>  
                     <table>
 			<th>שם</th>
 			<th>טלפון</th>
