@@ -577,16 +577,30 @@ class ManagerController extends CustomController
     }
     public function debtsAction()
     {
-    	$coop_id = $this->getCoopId();
-		$coop_users = new Coop_Users();
-		$users = $coop_users->getAllUsers($coop_id);
-		
-		$this->_smarty->assign('users', $users);
-		
-    	$this->_smarty->assign('action', 'debts');
-    	$this->_smarty->assign('hide_left_panel', '1');
-    	$this->_smarty->assign('tpl_file', 'manager/debts.tpl');
-    	$this->_smarty->display('common/layout.tpl');
+    	$request = $this->getRequest();
+    	if (!$request->isPost())
+    	{
+	    	$coop_id = $this->getCoopId();
+			$coop_users = new Coop_Users();
+			$users = $coop_users->getAllUsers($coop_id);
+			
+			$this->_smarty->assign('users', $users);
+			
+	    	$this->_smarty->assign('action', 'debts');
+	    	$this->_smarty->assign('hide_left_panel', '1');
+	    	$this->_smarty->assign('tpl_file', 'manager/debts.tpl');
+	    	$this->_smarty->display('common/layout.tpl');
+	    }
+	    else{
+	    	$post = $request->getPost();
+	    	$coop_users = new Coop_Users();
+	    	foreach ($post as $user_id => $user_comments){
+	    		$coop_users->editUser($user_id, array('user_comments' => $user_comments));
+	    	}
+
+	    	$this->_redirect("manager/debts");
+
+	    }
     
 	}
 }
