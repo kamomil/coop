@@ -115,7 +115,7 @@ class Coop_Users extends Awsome_DbTable
 
     private function getUsers($fields, $coop_id)
     {
-        $sql = "SELECT $fields FROM users WHERE coop_id = " . (int)$coop_id . " AND user_deleted = 0 ORDER BY user_first_name";
+        $sql = "SELECT $fields FROM users WHERE coop_id = " . (int)$coop_id . " AND user_deleted = 0 ORDER BY user_first_name, user_last_name";
         if (!$results = $this->adapter->fetchAll($sql)) {
             return false;
         }

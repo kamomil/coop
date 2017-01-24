@@ -1,4 +1,22 @@
 <!-- List of debts of Coop members -->
+<script type="text/javascript">
+var formSubmitting = false;
+var setFormSubmitting = function() { formSubmitting = true; };
+
+window.onload = function() {
+    window.addEventListener("beforeunload", function (e) {
+        if (formSubmitting) {
+            return undefined;
+        }
+
+        var confirmationMessage = 'It looks like you have been editing something. '
+                                + 'If you leave before saving, your changes will be lost.';
+
+        (e || window.event).returnValue = confirmationMessage; //Gecko + IE
+        return confirmationMessage; //Gecko + Webkit, Safari, Chrome etc.
+    });
+};
+</script>
 <div class="section">
 	<div class="title">
 		<h3>חובות</h3>
@@ -8,10 +26,16 @@
 	<div class="content">
 		{if $users != null}
 		<div class="list">
-		<form action="" method="POST" class="form validate_me">
+		<form action="" method="POST" class="form validate_me" onsubmit="setFormSubmitting()">
 		<table>
 			<th>שם</th>
 			<th>חוב</th>
+			<th> </th>
+			<tr>
+				<td></td>
+				<td></td>
+				<td rowspan="{$users|@count}"><input type="submit" value="אישור" /></td>
+			</tr>
 			{foreach from=$users item=row}
 			{if $row.user_comments != NULL}
 			<tr>
@@ -21,9 +45,7 @@
 			{/if}
 			{/foreach}
 		</table>	
-		<p class="submit">
-			<input type="submit" value="אישור" />			
-		</p>	
+			
 		</form>
 		</div>
 		{else}
