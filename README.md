@@ -1,4 +1,87 @@
-####COOP
+Dafna:
+======
+I installed the code on a google cloud instance: [http://35.188.1.119](http://35.188.1.119)
+
+I used "Cloud Launcher" to install a LAMP machine - it already have apache, mysql and php.
+Then I opened ssh from the browser.
+Then:
+```
+cd /var/www
+git clone https://github.com/kamomil/coop.git
+```
+Took me time to understand how to configure the db,  
+Then I found out there is a default settings in /etc/mysql/debian.cnf
+
+```
+**dafna3@lamp-1-vm:/var/www/coops-php$** sudo cat /etc/mysql/debian.cnf 
+# Automatically generated for Debian scripts. DO NOT TOUCH!
+[client]
+host     = localhost
+user     = debian-sys-maint
+password = TFSshVCEzg15j04J
+socket   = /var/run/mysqld/mysqld.sock
+[mysql_upgrade]
+host     = localhost
+user     = debian-sys-maint
+password = TFSshVCEzg15j04J
+socket   = /var/run/mysqld/mysqld.sock
+basedir  = /usr
+```
+
+I uploaded the sql file that Eyal Weinstock sent me (possible to easly uploda files from click the gear icon in the ssh from the browser),
+I added the lines
+```
+CREATE DATABASE `coops-prod`;
+USE `coops-prod`;
+```
+and run:
+```
+mysql --user=debian-sys-maint --password < coops-prod.sql
+```
+also need to change `./source/application/configs/application.ini` accordingly
+
+In the apache need to do the following:
+
+in the file `/etc/apache2/sites-available/lamp-server.conf`:
+
+```
+DocumentRoot /var/www/coop/source/public
+  <Directory />
+    Options Indexes FollowSymLinks MultiViews
+    AllowOverride All
+    Order allow,deny
+    allow from all
+  </Directory>
+```
+
+also need to set it in the file `/etc/apach2/apache2.conf`:
+
+```
+<Directory />
+        Options FollowSymLinks
+        AllowOverride All
+        Require all denied
+</Directory>
+
+<Directory /var/www/>
+        Options Indexes FollowSymLinks
+        AllowOverride All
+        Require all granted
+</Directory>
+```
+
+**the "AllOverride All" is crucial!**
+
+also, in the files `/etc/php5/apache2/php.ini` `/etc/php5/cli/php.ini` need to set `short_open_tag` from Off to On:
+```
+short_open_tag = On
+```
+I talked to Eyal Rosen, he saied I should also set mod_rewrite on apache, it was already installed on the apache.
+Finnaly, need to change the owner of the of all the files:
+```
+sudo chown www-data:root coops-php/ -R
+```
+#### COOP
 Coop is an open source stock managment system for co-ops, developed mainly by [@eyalrosen](https://github.com/eyalrosen). 
 The COOP system is currently built for food co-ops and uses Hebrew as its UI language.
 
