@@ -81,6 +81,60 @@ Finnaly, need to change the owner of the of all the files:
 ```
 sudo chown www-data:root coops-php/ -R
 ```
+
+6.10.2017
+---------
+
+I configured things so that I can use sublime editor with sftp synchronization.
+I generated ssh key pairs following the instructions [here](https://cloud.google.com/compute/docs/instances/adding-removing-ssh-keys#createsshkeys)
+
+Added key with user dafna3.
+
+Then I had to add rw permission to dafna3, So I created a linux group called 'dev' with users: root,www-data,dafna3:
+
+```
+sudo groupadd dev
+sudo usermod -a -G dev dafna3
+sudo usermod -a -G dev root
+sudo usermod -a -G dev www-data
+sudo chown www-data:dev /var/www/coops-php -R
+```
+
+then, in sublime editor:  right click on local folder in the "FOLDERS" view
+in the ledt side of the editor. ->FTP/SFTP->"Edit Remote Mapping".
+Then edited: 
+
+```
+"type": "sftp",
+
+    "save_before_upload": true,
+    "upload_on_save": true,
+    "sync_down_on_open": false,
+    "sync_skip_deletes": false,
+    "sync_same_age": true,
+    "confirm_downloads": false,
+    "confirm_sync": false,
+    "confirm_overwrite_newer": false,
+    
+    "host": "35.188.1.119",
+    "user": "dafna3",
+    //"password": "password",
+    //"port": "22",
+    
+    "remote_path": "/var/www/coops-php",
+    "ignore_regexes": [
+        "\\.sublime-(project|workspace)", "sftp-config(-alt\\d?)?\\.json",
+        "sftp-settings\\.json", "/venv/", "\\.svn/", "\\.hg/", "\\.git/",
+        "\\.bzr", "_darcs", "CVS", "\\.DS_Store", "Thumbs\\.db", "desktop\\.ini"
+    ],
+    //"file_permissions": "664",
+    //"dir_permissions": "775",
+    
+    //"extra_list_connections": 0,
+
+    "connect_timeout": 30,
+```
+
 #### COOP
 Coop is an open source stock managment system for co-ops, developed mainly by [@eyalrosen](https://github.com/eyalrosen). 
 The COOP system is currently built for food co-ops and uses Hebrew as its UI language.
