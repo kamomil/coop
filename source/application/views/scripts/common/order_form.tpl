@@ -24,13 +24,13 @@ var public_path = '{$public_path}';
 <script src="{$js_path}/jquery/jquery-hotkeys/jquery.hotkeys.js"></script>
 <script src="{$js_path}/autocomplete_extensions.js"></script>
 
+
 <script src="{$js_path}/jquery/ejs/ejs_production.js"></script>
 <script>
 var products = new Array();
 {foreach from=$products item=product}
 products[{$product.product_id}] = { 
     name: "{$product.product_name|escape:"html"|stripslashes}",
-    price: "{$product.product_price|escape:"html"|stripslashes}",
     measure: "{$product.product_measure|escape:"html"|stripslashes}",
     description: "{$product.product_description|escape:"html"|stripslashes}",
     manufacturer: "{$product.product_manufacturer|escape:"html"|stripslashes}",
@@ -102,7 +102,7 @@ products[{$product.product_id}] = {
 		<tr category_id="{$cat.category_id}" product_id="{$product.product_id}">
 			<td class="{$cellClass}"><a name="go_{$product.product_id}" {if $product.product_image || $product.product_about != null}class="order_name" hasImage="{$product.product_image}" href="javascript:void(0);" {/if} id="{$product.product_id}">{$product.product_name|escape:"html"|stripslashes}</a></td>
 			<td class="{$cellClass}"><input type="text" size="4" dir="ltr" maxlength="10" class="amount_input" name="items[{$product.product_id}]" product_id="{$product.product_id}" value="{$items[$product.product_id].item_amount}" original_amount="{$items[$product.product_id].item_amount}" items_left="{if $product.product_items_left == "ללא הגבלה"}unlimited{else}{$product.product_items_left-$product.orders_count}{/if}" {if !$allow_edit}disabled{/if} /> {$product.product_measure|escape:"html"|stripslashes}</td>
-			<td class="{$cellClass}">₪<a class="price" product_id="{$product.product_id}">{$product.product_price|escape:"html"|stripslashes}</a></td>
+			<td class="{$cellClass}">₪<a class="price" product_id="{$product.product_id}">{$items[$product.product_id].product_price|escape:"html"|stripslashes}</a></td>
 			<td class="{$cellClass}">₪<a class="amount_txt" product_id="{$product.product_id}">{$product.product_price * $items[$product.product_id].item_amount}</a></td>
 			<td class="{$cellClass}">{$product.product_description|escape:"html"|stripslashes}</td>
 			<td class="{$cellClass}">{$product.product_manufacturer|escape:"html"|stripslashes}</td>

@@ -93,6 +93,7 @@ class Coop_Orders extends Awsome_DbTable
             return $order;
 	}
         
+        //this function is not in use
         public function getUsersLastOrder($user_id)
         {
             $order = $this->getCurrentOrder($user_id);
@@ -310,6 +311,7 @@ class Coop_Orders extends Awsome_DbTable
 		return $data;
 	}
 	
+	
 	public function getItems($order_id)
 	{
                 $sql = "SELECT *
@@ -329,6 +331,56 @@ class Coop_Orders extends Awsome_DbTable
 			$returned[$row['product_id']] = $row;
 		}
 		return $returned;
+	}
+	
+
+	public function getItemsOfPrevOrder($order_id)
+	{
+		$order_date_sql = "SELECT order_date FROM orders where order_id = " . (int)$order_id;
+		$order_date = $this->adapter->fetchAll($order_date_sql);
+		if( sizeof($order_date) != 1)
+		{
+			return false;
+		}
+		$date = $order_date[0]['order_date'];
+		error_log("Orders.php: getItems: dafna: order_date:");
+		error_log(print_r($date,TRUE));
+
+		$min_date = $this->adapter->fetchAll("select MIN(price_date) from prices");
+		$sql = "";
+		error_log(print_r($min_date,TRUE));
+		if(strtotime($date) >= strtotime($min_date[0]['MIN(price_date)'])){
+			$product_columns = "product_about, product_description, product_image, product_items_left, product_manufacturer, product_measure, product_name";
+
+			$sql = "SELECT product_id, $product_columns, price_amount as product_price, item_amount, round(item_amount * price_amount * 100) / 100 item_total FROM (SELECT products.product_id, $product_columns, category_id, item_amount, price_amount FROM (SELECT order_items.product_id, $product_columns, category_id, item_amount FROM (SELECT product_id, category_id, $product_columns from products) AS products join (SELECT product_id, item_amount FROM order_items where order_id = ".(int)$order_id.") as order_items on order_items.product_id = products.product_id) as products Join (SELECT det.product_id, det_id, price_amount FROM (SELECT product_id, max( price_id ) as det_id FROM prices WHERE price_date <= '$date' GROUP BY product_id) AS det JOIN ( SELECT product_id, price_id, price_amount FROM prices) AS val ON det.product_id = val.product_id and det.det_id = val.price_id) as prices on products.product_id = prices.product_id) as master  order by category_id, product_name";
+        
+		}
+		else{
+			$items = $this->getItems($order_id);
+			
+			foreach ($items as $product_id => $row)
+			{
+				$items[$product_id]['product_price'] = 0;
+			}
+			return array(TRUE, $items);
+		}
+		
+		if (!$items = $this->adapter->fetchAll($sql))
+		{
+			error_log("Orders.php: getItems: dafna: fatchAll sql FAILED");
+			return false;
+		}
+		$returned = array();
+
+		error_log($sql);
+		error_log(print_r($items,TRUE));
+		
+		foreach ($items as $num => $row)
+		{
+			$returned[$row['product_id']] = $row;
+		}
+		
+		return array(FALSE, $items);
 	}
 	
 	public function getItemsByCategory($order_id)

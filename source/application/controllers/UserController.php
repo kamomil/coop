@@ -81,6 +81,9 @@ class UserController extends CustomController
 
         if (!empty($order)) {
             $items = $coop_orders->getItems($order['order_id']);
+            error_log("currentAction: Itmes:");
+            error_log(print_r($items,TRUE));
+
             $this->_smarty->assign('order', $order);
             $this->_smarty->assign('items', $items);
         }
@@ -115,8 +118,20 @@ class UserController extends CustomController
         $coop_orders = new Coop_Orders();
         $order = $coop_orders->getOrder((int)$params['id']);
 
-        $items = $coop_orders->getItems($order['order_id']);
+        $items_and_age = $coop_orders->getItemsOfPrevOrder($order['order_id']);
+
+        $before_price_doc = $items_and_age[0];
+        $items = $items_and_age[1];
+        
+
+        //$items = $coop_orders->getItems($order['order_id']);
         $this->_smarty->assign('items', $items);
+        $this->_smarty->assign('before_price_doc', $before_price_doc);
+
+        error_log("prevOrderAction: Itmes:");
+        error_log(print_r($items,TRUE));
+
+        //$this->_smarty->assign('items', $items);
 
         $coop_products = new Coop_Products();
         $cats = $coop_products->getAllProductsInsideCategories($coop_id, false);

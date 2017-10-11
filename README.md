@@ -1,5 +1,7 @@
 Dafna:
 ======
+At the end of this README there is an explanation about the mapping from the url pathes to the php code
+
 I installed the code on a google cloud instance: [http://35.188.1.119](http://35.188.1.119)
 
 I used "Cloud Launcher" to install a LAMP machine - it already have apache, mysql and php.
@@ -313,3 +315,20 @@ The application is a PHP application. The source serves as the deployment packag
 * Set up an Apache server with site configuration pointing to the source/public directory as the docroot for serving the content.
 * Alternatively, use php built-in web server. 
 `php -S 0.0.0.0:8080 -t source/public`
+
+
+Examples of the mapping from the url path to the php 
+=======================================================
+
+I will call the host domain of the site "www.coop.org" for the following examples.
+
+Examples of mapping from the url to the php code:
+
+
+The url `www.coop.org/duty/view-order/id/23583`
+
+Will map to the function `viewOrderAction` in the file `source/application/controllers/DutyController.php` with 23583 as the values of the parameter "id".
+
+The url `www.coop.org/user/prev-order/id/23583` Will map to the function `prevOrderAction` in the file `source/application/controllers/UserController.php with 23583 as the values of the parameter "id".
+
+See the code of those functions for how parameters are accessed.
