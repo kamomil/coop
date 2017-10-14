@@ -25,7 +25,6 @@ console.log("order_view_type = "+view);
 <script src="{$js_path}/jquery/jquery-hotkeys/jquery.hotkeys.js"></script>
 <script src="{$js_path}/autocomplete_extensions.js"></script>
 
-
 <script src="{$js_path}/jquery/ejs/ejs_production.js"></script>
 <script>
 //products is the list of all products, not just the one oredered. It is used for the combobox for 
@@ -34,13 +33,13 @@ var products = new Array();
 {foreach from=$products item=product}
 products[{$product.product_id}] = { 
     name: "{$product.product_name|escape:"html"|stripslashes}",
+    price: "{$product.product_price|escape:"html"|stripslashes}",
     measure: "{$product.product_measure|escape:"html"|stripslashes}",
     description: "{$product.product_description|escape:"html"|stripslashes}",
     manufacturer: "{$product.product_manufacturer|escape:"html"|stripslashes}",
     categoryID: "{$product.category_id}"
 };
 {/foreach}
-
 
 </script>
 
