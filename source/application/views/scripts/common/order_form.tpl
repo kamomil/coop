@@ -4,6 +4,7 @@ var duty_editing = {if $duty_editing}true{else}false{/if};
 var change_view_type_url = "{$public_path}/user/change-view-type";
 var view = '{$order_view_type}';
 var public_path = '{$public_path}';
+console.log("order_view_type = "+view);
 </script>
 <link rel="stylesheet" href="{$js_path}/jquery/jquery-tooltip/jquery.tooltip.css" />
 <link rel="stylesheet" href="{$js_path}/jquery/simplemodal/css/basic.css" />
@@ -27,6 +28,8 @@ var public_path = '{$public_path}';
 
 <script src="{$js_path}/jquery/ejs/ejs_production.js"></script>
 <script>
+//products is the list of all products, not just the one oredered. It is used for the combobox for 
+// adding a new product to the list
 var products = new Array();
 {foreach from=$products item=product}
 products[{$product.product_id}] = { 
@@ -37,6 +40,7 @@ products[{$product.product_id}] = {
     categoryID: "{$product.category_id}"
 };
 {/foreach}
+
 
 </script>
 
@@ -64,7 +68,7 @@ products[{$product.product_id}] = {
                <option value="{$product.product_id}">{$product.product_name|escape:"html"|stripslashes}</option>
                {/foreach}
                 </select>  
-                
+                <button type="button" id="addItem">הוסף</button>
                    <label style="position: relative; bottom: 3px; padding-right: 10px;">הערות למשתמש:</label>&nbsp;&nbsp;
             <input style="position: relative; bottom: 3px;" size="60" name="user_comments" value="{$order.user_comments|escape:"html"|stripslashes}" />
          <br /><b>טיפ:</b> תורנ/ית יקר/ה, השתמש/י בקיצורי המקלדת Ctrl+1 לחיפוש/הוספת מוצר ו-Ctrl+s לשינוי סטטוס (ומשם אפשר לעשות Tab ואנטר)<br /><br />

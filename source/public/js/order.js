@@ -111,19 +111,31 @@ $(document).ready(function() {
             
             $("#products").combobox();
 
-            $(".acinput").keyup(function(event) {
+            function addItem(){
+            	var id = $("#products").val();
+                if (id == ""){
+					console.log("order.js: Warning: product id is an empty string");    
+                	return;
+	    		}
+	    		else{
+	    			console.log("order.js: product id is "+id);
+	    		}
+
+                $(".colspan[category_id=" + products[id].categoryID + "]").show();
+                $("tr[product_id="+ id + "]").show();                    
+                $("tr[product_id="+ id + "] td").removeClass("row").addClass("rowalt");                    
+                window.location = "#go_" + id;
+                $(".amount_input[product_id="+ id + "]").focus().select();
+                $(".acinput").val("");
+            }
+
+            $("#addItem").click(addItem);
+
+            $(".acinput").keydown(function(event) {
                 if (event.which == 13)
                 {
-                    var id = $("#products").val();
-                    if (id == "")
-                        return;
-
-                    $(".colspan[category_id=" + products[id].categoryID + "]").show();
-                    $("tr[product_id="+ id + "]").show();                    
-                    $("tr[product_id="+ id + "] td").removeClass("row").addClass("rowalt");                    
-                    window.location = "#go_" + id;
-                    $(".amount_input[product_id="+ id + "]").focus().select();
-                    $(".acinput").val("");
+		    		console.log("order.js: handle event.which 13");	
+                    addItem();
                 }
             });
             
