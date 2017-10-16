@@ -98,15 +98,22 @@ products[{$product.product_id}] = {
 		</tr>
 		{foreach from=$cat.products key=key item=product}		
 		{if !$allow_edit && empty($items[$product.product_id].item_amount)}
-		
+		<!--
+			 - If allow_edit is false we add to the table only the products that the user order. this is for viewing previous orders
+			where you cant add new produccts so no point on lising them.
+			- If allow_edit is true we list all the products and set "hide" property if the product is not orderd.
+			For prev-order view, we also check the $allow_edit to decide weather to show the current price of the product or the price
+			of the product in the time it was ordered 
+    	
+		-->
 		{else}
 		{if $order_view_type == "list"}
 		{cycle values='row,rowalt' assign=cellClass}                
 		<tr category_id="{$cat.category_id}" product_id="{$product.product_id}">
 			<td class="{$cellClass}"><a name="go_{$product.product_id}" {if $product.product_image || $product.product_about != null}class="order_name" hasImage="{$product.product_image}" href="javascript:void(0);" {/if} id="{$product.product_id}">{$product.product_name|escape:"html"|stripslashes}</a></td>
 			<td class="{$cellClass}"><input type="text" size="4" dir="ltr" maxlength="10" class="amount_input" name="items[{$product.product_id}]" product_id="{$product.product_id}" value="{$items[$product.product_id].item_amount}" original_amount="{$items[$product.product_id].item_amount}" items_left="{if $product.product_items_left == "ללא הגבלה"}unlimited{else}{$product.product_items_left-$product.orders_count}{/if}" {if !$allow_edit}disabled{/if} /> {$product.product_measure|escape:"html"|stripslashes}</td>
-			<td class="{$cellClass}">₪<a class="price" product_id="{$product.product_id}">{$product.product_price|escape:"html"|stripslashes}</a></td>
-			<td class="{$cellClass}">₪<a class="amount_txt" product_id="{$product.product_id}">{$product.product_price * $items[$product.product_id].item_amount}</a></td>
+			<td class="{$cellClass}">₪<a class="price" product_id="{$product.product_id}">{if !$allow_edit}{$items[$product.product_id].product_price}{else}{$product.product_price|escape:"html"|stripslashes}{/if}</a></td>
+			<td class="{$cellClass}">₪<a class="amount_txt" product_id="{$product.product_id}">{if !$allow_edit}{$items[$product.product_id].item_total}{else}{$product.product_price * $items[$product.product_id].item_amount}{/if}</a></td>
 			<td class="{$cellClass}">{$product.product_description|escape:"html"|stripslashes}</td>
 			<td class="{$cellClass}">{$product.product_manufacturer|escape:"html"|stripslashes}</td>
 			

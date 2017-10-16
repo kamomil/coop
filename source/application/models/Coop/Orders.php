@@ -337,14 +337,17 @@ class Coop_Orders extends Awsome_DbTable
 	public function getItemsOfPrevOrder($order_id)
 	{
 		$order_date_sql = "SELECT order_date FROM orders where order_id = " . (int)$order_id;
+		//$order_date_sql = "SELECT order_reset_day + 6 FROM orders where order_id = " . (int)$order_id;
+
+		//SELECT order_reset_day + 6 FROM orders where order_id = 29941//this did not work
 		$order_date = $this->adapter->fetchAll($order_date_sql);
 		if( sizeof($order_date) != 1)
 		{
 			return false;
 		}
 		$date = $order_date[0]['order_date'];
-		error_log("Orders.php: getItems: dafna: order_date:");
-		error_log(print_r($date,TRUE));
+		//error_log("Orders.php: getItems: dafna: order_date:");
+		//error_log(print_r($date,TRUE));
 
 		$min_date = $this->adapter->fetchAll("select MIN(price_date) from prices");
 		$sql = "";
@@ -373,7 +376,7 @@ class Coop_Orders extends Awsome_DbTable
 		$returned = array();
 
 		error_log($sql);
-		error_log(print_r($items,TRUE));
+		//error_log(print_r($items,TRUE));
 		
 		foreach ($items as $num => $row)
 		{

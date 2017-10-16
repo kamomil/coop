@@ -128,8 +128,8 @@ class UserController extends CustomController
         $this->_smarty->assign('items', $items);
         $this->_smarty->assign('before_price_doc', $before_price_doc);
 
-        error_log("prevOrderAction: Itmes:");
-        error_log(print_r($items,TRUE));
+        //error_log("prevOrderAction: Itmes:");
+        //error_log(print_r($items,TRUE));
 
         //$this->_smarty->assign('items', $items);
 
